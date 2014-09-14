@@ -17,7 +17,7 @@ DOLLAR_TO_DRAM = 410
 
 class Database(object):
     def __init__(self):
-        self.conn = psycopg2.connect('dbname=test')
+        self.conn = psycopg2.connect('dbname=list_am')
 
     def create_listam_table(self):
         cur = self.conn.cursor()
@@ -79,47 +79,6 @@ class Database(object):
 
 db = Database()
 #db.create_listam_table()
-
-
-class CategoryGuesser():
-    known_phrases = {
-        'case' : [],
-        'cpu' : [],
-        'mb' : [],
-        'cpu' : [],
-        'mem' : [],
-        'ssd' : [],
-        'gpu' : [],
-        'hdd' : [],
-        }
-
-    @staticmethod
-    def get_title_phrases(title):
-        ''' Returns a list containing the words found in
-            the title in lowercase and stripped non-alnum chars
-        '''
-
-        regex_string = u'[^0-9a-zA-Z'\
-                       u'աԱբԲգԳդԴեԵզԶէԷըԸթԹժԺիԻլԼխԽծԾկԿհՀձՁղՂճՃմՄ'\
-                       u'յՅնՆշՇոՈչՉպՊջՋռՌսՍվՎտՏրՐցՑոՈւՒփՓքՔևևօՕՖֆ'\
-                       u'АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПп'\
-                       u'РрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя]'
-        special_chars_removed = re.sub(regex_string, ' ', title)
-
-        words_lowercase = special_chars_removed.lower()
-
-        phrases = words_lowercase.split()
-
-        return phrases
-
-    @staticmethod
-    def guess_category(self, title):
-        phrases = CategoryGuesser.get_title_phrases(title)
-
-        for phrase in phrases:
-            print(phrase, end='')
-
-        print()
 
 
 
