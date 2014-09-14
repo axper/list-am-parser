@@ -22,8 +22,7 @@ class Database(object):
     def create_listam_table(self):
         cur = self.conn.cursor()
 
-        cur.execute('create table listam (item_id serial PRIMARY KEY,'
-                    '                     url varchar,'
+        cur.execute('create table listam (id serial PRIMARY KEY,'
                     '                     title varchar,'
                     '                     price bigint,'
                     '                     location varchar,'
@@ -39,7 +38,7 @@ class Database(object):
     def item_exists(self, item_id):
         cur = self.conn.cursor()
 
-        cur.execute('select 1 from listam where item_id=(%s) limit 1;', (item_id,))
+        cur.execute('select 1 from listam where id=(%s) limit 1;', (item_id,))
         self.conn.commit()
 
         fetchall_result = cur.fetchall()
@@ -57,8 +56,7 @@ class Database(object):
 
         try:
             cur.execute('insert into listam values ('
-                        '%(item_id)s,'
-                        '%(url)s,'
+                        '%(id)s,'
                         '%(title)s,'
                         '%(price)s,'
                         '%(location)s,'
@@ -163,8 +161,7 @@ class ItemParser(object):
         self.soup = get_soup(url)
 
         info = {}
-        info['item_id'] = item_id
-        info['url'] = url
+        info['id'] = item_id
         info['title'] = self.get_title()
         info['price'] = self.get_price()
         info['location'] = self.get_location()
@@ -201,13 +198,16 @@ def parse_page(page_number):
     # {}: page number
     # n=1: yerevan
     # type=0: offer
-    soup = get_soup('http://www.list.am/category/98/{}?n=1&type=0'.format(page_number))
+    print('Parsing page #' + str(page_number))
+
+    soup = get_soup('http://www.list.am/category/98/{}?n=1&type=1'.format(page_number))
 
     all_links = soup.find_all('a')
 
     for link in all_links:
         text = link.string
         href = link['href']
+
 
         if text is not None and href.startswith('/item/'):
             item_id = get_item_id_from_href_string(href)
