@@ -1,0 +1,2 @@
+#!/bin/sh
+gprof2dot -f pstats "${1}.prof" | dot -Tsvg -o "${1}.svg" && luakit "${1}.svg"
