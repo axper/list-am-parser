@@ -72,6 +72,7 @@ class CategoryGuesser(object):
                        CategoryGuesser.armenian_alphabet +\
                        CategoryGuesser.russian_alphabet +\
                        u']'
+        
         special_chars_removed = re.sub(regex_string, ' ', title)
 
         words_lowercase = special_chars_removed.lower()
@@ -109,7 +110,7 @@ class Database1(object):
     def categorize(self):
         self.clean_table_item_categories()
 
-        self.cur.execute('select item_id, title '
+        self.cur.execute('select id, title '
                          'from listam;'
                         )
         fetchall_result = self.cur.fetchall()
@@ -120,6 +121,10 @@ class Database1(object):
         for row in fetchall_result:
             item_id = row[0]
             title = row[1]
+
+            # Sanity check
+            if title is None:
+                continue
 
             phrase_and_category_tuples = CategoryGuesser.get_categories(title)
 
@@ -216,7 +221,7 @@ class Database2(object):
     def update_category(self, item_id, category):
         self.cur.execute('update listam '
                          'set category = %s '
-                         'where item_id = %s;',
+                         'where id = %s;',
                          (category, item_id,))
 
     def get_main_categories(self, list_of_categories):
@@ -243,9 +248,9 @@ class Database2(object):
         return max_key
 
     def categorize(self):
-        self.cur.execute('select listam.item_id, item_categories.category '
+        self.cur.execute('select listam.id, item_categories.category '
                          'from listam join item_categories '
-                         'on listam.item_id = item_categories.item_id;'
+                         'on listam.id = item_categories.item_id;'
                         )
         fetchall_result = self.cur.fetchall()
         self.conn.commit()
